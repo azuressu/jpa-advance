@@ -1,6 +1,5 @@
-package com.sparta.jpaadvance;
+package com.sparta.jpaadvance.relation;
 
-import com.fasterxml.jackson.annotation.JsonRootName;
 import com.sparta.jpaadvance.entity.Food;
 import com.sparta.jpaadvance.entity.User;
 import com.sparta.jpaadvance.repository.FoodRepository;
@@ -12,11 +11,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Transactional
 @SpringBootTest
-public class OneToManyTest {
+public class ManyToManyTest {
 
     @Autowired
     UserRepository userRepository;
@@ -25,8 +22,9 @@ public class OneToManyTest {
 
     @Test
     @Rollback(value = false)
-    @DisplayName("1대N 단방향 테스트")
+    @DisplayName("N대M 단방향 테스트")
     void test1() {
+
         User user = new User();
         user.setName("Robbie");
 
@@ -36,29 +34,14 @@ public class OneToManyTest {
         Food food = new Food();
         food.setName("후라이드 치킨");
         food.setPrice(15000);
-        food.getUserList().add(user);  // 외래 키 (연관 관계) 설정
-        food.getUserList().add(user2); // 외래 키 (연관 관계) 설정
+        food.getUserList().add(user);
+        food.getUserList().add(user2);
 
         userRepository.save(user);
         userRepository.save(user2);
         foodRepository.save(food);
-
-        // 추가적인 UPDATE 쿼리 발생 확인 가능
+        
+        // 자동으로 중간 테이블 order가 create되고 insert 되는 것을 확인할 수 있다
     }
-
-    @Test
-    @DisplayName("1대N 조회 테스트")
-    void test2() {
-        Food food = foodRepository.findById(1L).orElseThrow(NullPointerException::new);
-        System.out.println("food.getName() = " + food.getName());
-
-        // 해당 음식을 주문한 고객 정보 확인
-        List<User> userList = food.getUserList();
-
-        for(User user: userList) {
-            System.out.println("user.getName() = " + user.getName());
-        }
-    }
-
 
 }
