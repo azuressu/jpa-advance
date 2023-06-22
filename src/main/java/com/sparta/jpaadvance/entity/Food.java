@@ -19,15 +19,8 @@ public class Food {
     private String name;
     private double price;
 
-    @ManyToMany
-    @JoinTable(name = "orders", // 중간 테이블 생성
-                joinColumns = @JoinColumn(name = "food_id"),       // 현재 위치인 Food Entity에서 중간 테이블로 조인한 컬럼 설정
-                inverseJoinColumns = @JoinColumn(name = "user_id")) // 반대 위치인 User Entity에서 중간 테이블로 조인할 컬럼 설정
-    private List<User> userList = new ArrayList<>();
-
-    public void addUserList(User user) {
-        this.userList.add(user); // 외래 키 (연관 관계) 설정
-        user.getFoodList().add(this);
-    }
+    // Order를 통해서 User를 조회할 생각이 없다면 필요없음
+    @OneToMany(mappedBy = "food") // 외래 키의 주인이 Order로 넘어감
+    private List<Order> orderList = new ArrayList<>();
 
 }
